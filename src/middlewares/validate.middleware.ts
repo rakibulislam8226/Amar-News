@@ -9,9 +9,17 @@ export const validate =
 
                 next();
             } catch (error: any) {
+                const errors = (error.issues ?? error.errors ?? []).map(
+                    (issue: any) => ({
+                        label: issue.path.join('.'),
+                        message: issue.message,
+                    }),
+                );
+
                 return res.status(400).json({
                     success: false,
-                    errors: error.errors,
+                    message: 'Validation failed',
+                    errors,
                 });
             }
         };
