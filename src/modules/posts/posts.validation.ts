@@ -1,0 +1,13 @@
+import { z } from 'zod';
+
+export const createPostSchema = z.object({
+    title: z.string().min(1, 'Title is required'),
+    content: z.string().min(1, 'Content is required'),
+});
+
+export const updatePostSchema = z.object({
+    title: z.string().min(1).optional(),
+    content: z.string().min(1).optional(),
+}).refine((data) => data.title || data.content, {
+    message: 'At least one field (title or content) must be provided',
+});
