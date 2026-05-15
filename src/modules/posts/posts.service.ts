@@ -1,4 +1,5 @@
 import { PostRepository } from './post.repository';
+import { buildMeta, PaginationOptions } from '../../utils/pagination';
 
 export class PostsService {
     async create(userId: string, payload: { title: string; content: string }) {
@@ -7,8 +8,14 @@ export class PostsService {
         return post;
     }
 
-    async findAll() {
-        return PostRepository.find({ order: { createdAt: 'DESC' } });
+    async findAll({ page, limit }: PaginationOptions) {
+        const [data, total] = await PostRepository.findAndCount({
+            order: { createdAt: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return { data, meta: buildMeta(total, page, limit) };
     }
 
     async findOne(id: string) {

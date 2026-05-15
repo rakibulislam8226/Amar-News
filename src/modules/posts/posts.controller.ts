@@ -1,6 +1,7 @@
 import { Response } from 'express';
 
 import { AuthRequest } from '../../middlewares/auth.middleware';
+import { parsePagination } from '../../utils/pagination';
 import { PostsService } from './posts.service';
 
 const postsService = new PostsService();
@@ -25,12 +26,14 @@ export class PostsController {
 
     async findAll(req: AuthRequest, res: Response) {
         try {
-            const result = await postsService.findAll();
+            const pagination = parsePagination(req.query);
+            const { data, meta } = await postsService.findAll(pagination);
 
             return res.status(200).json({
                 success: true,
                 message: 'Posts retrieved successfully.',
-                data: result,
+                data,
+                meta,
             });
         } catch (error: any) {
             return res.status(400).json({
