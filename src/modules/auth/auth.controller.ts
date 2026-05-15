@@ -30,10 +30,28 @@ export class AuthController {
 
             return res.status(200).json({
                 success: true,
+                message: 'Login successful.',
                 data: result,
             });
         } catch (error: any) {
             return res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
+    async refresh(req: Request, res: Response) {
+        try {
+            const result = await authService.refresh(req.body.refreshToken);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Token refreshed.',
+                data: result,
+            });
+        } catch (error: any) {
+            return res.status(401).json({
                 success: false,
                 message: error.message,
             });
